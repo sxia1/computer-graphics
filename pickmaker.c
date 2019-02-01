@@ -19,8 +19,8 @@ int main(){
   //Gradient
   for(int i = 0; i < 500; i ++){
     for(int j = 0; j < 500; j ++){
-      rgb[0] = i % 256;
-      rgb[1] = j % 256;
+      rgb[0] = (i * i) % 256;
+      rgb[1] = (i * j) % 256;
       rgb[2] = (i + j) % 256;
       sprintf(line, "%d %d %d ", rgb[0], rgb[1], rgb[2]);
       write(fd, line, strlen(line));
