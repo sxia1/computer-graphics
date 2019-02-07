@@ -34,38 +34,71 @@ void draw_line(int x0, int y0, int x1, int y1, screen s, color c) {
 
   //if sloped
   else{
+    int half = x1-x0;
+    int m = 2 *(y1-y0);
     int x = x0;
     int y = y0;
     int A = y1-y0;
     int B = -(x1-x0);
-    //Octant I and V
-    /*
-    int d = 2*A + B;
-    while(x <= x1){
-      plot(s, c, x, y);
-      if(d > 0){
-	y ++;
-	d += 2*B;
+    int d;
+    //Positive Slope
+    printf("\nhalf: %d m: %d\n", half, m);
+    if(m > 0){
+      if(m < half){
+	//Octant I and V
+	d = 2*A + B;
+	while(x <= x1){
+	  plot(s, c, x, y);
+	  if(d > 0){
+	    y ++;
+	    d += 2*B;
+	  }
+	  x ++;
+	  d += 2*A;
+	}
       }
-      x ++;
-      d += 2*A;
-    }
-    */
-    //Octant II and VI
-    /*
-    int d = A + 2*B;
-    while(y <= y1){
-      plot(s, c, x, y);
-      if(d < 0){
-	x ++;
-	d += 2*A;
+      else{
+	//Octant II and VI !!!!!!!!!!!!!!!!!!!!!
+	d = A + 2*B;
+	while(y <= y1){
+	  plot(s, c, x, y);
+	  if(d < 0){
+	    x ++;
+	    d += 2*A;
+	  }
+	  y ++;
+	  d += 2*B;
+	}
       }
-      y ++;
-      d += 2*B;
     }
-    */
-    //Octant III and VII
-
-    //Octant VI and VIII
+    //Negative Slope
+    else{
+      if(-m > half){
+	//Octant III and VII !!!!!!!!!!!!!!!!!!!!!
+	d = 2*B -A;
+	while(y >= y1){
+	  plot(s, c, x, y);
+	  if(d < 0){
+	    x ++;
+	    d -= 2*A;
+	  }
+	  y --;
+	  d += 2*B;
+	}
+      }
+      else{
+	//Octant IV and VIII
+	d = B -2*A;
+	while(x <= x1){
+	  plot(s, c, x, y);
+	  if(d > 0){
+	    y --;
+	    d += 2*B;
+	  }
+	  x ++;
+	  d -= 2*A;
+	}
+      }
+    }
   }
 }
