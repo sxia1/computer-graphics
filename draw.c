@@ -34,17 +34,14 @@ void draw_line(int x0, int y0, int x1, int y1, screen s, color c) {
 
   //if sloped
   else{
-    int half = x1-x0;
-    int m = 2 *(y1-y0);
     int x = x0;
     int y = y0;
     int A = y1-y0;
     int B = -(x1-x0);
     int d;
     //Positive Slope
-    printf("\nhalf: %d m: %d\n", half, m);
-    if(m > 0){
-      if(m < half){
+    if(A > 0){
+      if(A < -B){
 	//Octant I and V
 	d = 2*A + B;
 	while(x <= x1){
@@ -73,7 +70,7 @@ void draw_line(int x0, int y0, int x1, int y1, screen s, color c) {
     }
     //Negative Slope
     else{
-      if(-m > half){
+      if(A < B){
 	//Octant III and VII !!!!!!!!!!!!!!!!!!!!!
 	d = 2*B -A;
 	while(y >= y1){
