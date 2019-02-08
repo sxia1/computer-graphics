@@ -17,57 +17,14 @@ int main() {
 
   clear_screen(s);
 
-  //Test Vertical and Horizontal Lines
-  draw_line(250, 0, 250, 500, s, c); //SUCCESS
-  draw_line(0, 250, 500, 250, s, c); //SUCCESS
-
-  //Test Octant I
-  draw_line(250, 250, 500, 450, s, c); //SUCCESS
-  draw_line(250, 250, 500, 400, s, c); //SUCCESS
-  draw_line(250, 250, 500, 350, s, c); //SUCCESS
-  draw_line(250, 250, 500, 300, s, c); //SUCCESS
-  
-  //Test Octant IV
-  draw_line(250, 250, 0, 50, s, c); //SUCCESS
-  draw_line(250, 250, 0, 100, s, c); //SUCCESS
-  draw_line(250, 250, 0, 150, s, c); //SUCCESS
-  draw_line(250, 250, 0, 200, s, c); //SUCCESS
-
-  //Test Octant II
-  draw_line(250, 250, 450, 500, s, c); //SUCCESS
-  draw_line(250, 250, 400, 500, s, c); //SUCCESS
-  draw_line(250, 250, 350, 500, s, c); //SUCCESS
-  draw_line(250, 250, 300, 500, s, c); //SUCCESS
-
-  //Test Octant VI 
-  draw_line(250, 250, 50, 0, s, c); //SUCCESS
-  draw_line(250, 250, 100, 0, s, c); //SUCCESS
-  draw_line(250, 250, 150, 0, s, c); //SUCCESS
-  draw_line(250, 250, 200, 0, s, c); //SUCCESS
-  
-  //Test Octant VII
-  draw_line(250, 250, 450, 0, s, c); //SUCCESS
-  draw_line(250, 250, 400, 0, s, c); //SUCCESS
-  draw_line(250, 250, 350, 0, s, c); //SUCCESS
-  draw_line(250, 250, 300, 0, s, c); //SUCCESS
-
-  //Test Octant III
-  draw_line(250, 250, 50, 500, s, c); //SUCCESS
-  draw_line(250, 250, 100, 500, s, c); //SUCCESS
-  draw_line(250, 250, 150, 500, s, c); //SUCCESS
-  draw_line(250, 250, 200, 500, s, c); //SUCCESS
-
-  //Test Octant IV
-  draw_line(250, 250, 0, 450, s, c); //SUCCESS
-  draw_line(250, 250, 0, 400, s, c); //SUCCESS
-  draw_line(250, 250, 0, 350, s, c); //SUCCESS
-  draw_line(250, 250, 0, 300, s, c); //SUCCESS
-  
-  //Test Octant VIII
-  draw_line(250, 250, 500, 50, s, c); //SUCCESS
-  draw_line(250, 250, 500, 100, s, c); //SUCCESS
-  draw_line(250, 250, 500, 150, s, c); //SUCCESS
-  draw_line(250, 250, 500, 200, s, c); //SUCCESS
+  for(int j = 0; j < 500; j += 50){
+    for(int i = 0; i < 500; i += 20){
+      c.blue += 1;
+      c.red += 1;
+      draw_line(i, j, i +20, j +25, s, c);
+      draw_line(i+20, j+25, i, j+50, s, c);
+    }
+  }
 
   display(s);
   save_extension(s, "lines.png");
