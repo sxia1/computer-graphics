@@ -18,44 +18,64 @@ int main() {
 
   clear_screen(s);
   
+  struct matrix *testedges;
+  struct matrix *testmodmatrix;
+
+  testmodmatrix = new_matrix(4, 4);
+  testedges = new_matrix(4, 4);
+
+  printf("\nIDENT TESTMODMATRIX\n");
+  ident(testmodmatrix);
+  print_matrix(testmodmatrix);
+  printf("\nTESTEDGES\n");
+  add_edge(testedges, 1, 2, 3, 4, 5, 6);
+  print_matrix(testedges);
+
+  printf("\nTESTMODMATRIX(IDENT) X TESTEDGES\n");
+  matrix_mult(testmodmatrix, testedges);
+  print_matrix(testedges);
+
+  printf("\nPOPULATE TESTMODMATRIX\n");
+  add_edge(testmodmatrix, 1,2,3,4,5,6);
+  add_edge(testmodmatrix, 7,8,9,10,11,12);
+  print_matrix(testmodmatrix);
+  
+  printf("\nTESTMODMATRIX X TESTEDGES\n");
+  matrix_mult(testmodmatrix, testedges);
+  print_matrix(testedges);
+  
+  free_matrix( testedges );
+  free_matrix( testmodmatrix );
+
+  
   struct matrix *edges;
   struct matrix *modmatrix;
 
   modmatrix = new_matrix(4, 4);
-  ident(modmatrix);
   edges = new_matrix(4, 4);
 
-  for(int r = 0; r < edges->rows; r++){
-    for(int c = 0; c < edges->cols; c++){
-      edges->m[r][c] = r+c;
-    }
+  //make a square
+  add_edge(edges, 250, 125, 0, 375, 250, 0);
+  add_edge(edges, 375, 250, 0, 250, 375, 0);
+  add_edge(edges, 250, 375, 0, 125, 250, 0);
+  add_edge(edges, 125, 250, 0, 250, 125, 0);
+  draw_lines(edges, s, c);
+
+  //ROTATION MODMATRIX
+  ident(modmatrix);
+  modmatrix->m[0][0] = 0.984807;
+  modmatrix->m[0][1] = 0.173648;
+  modmatrix->m[1][0] = -0.173648;
+  modmatrix->m[1][1] = 0.984807;  
+
+  for(int i = 0; i < 300; i ++){
+    matrix_mult(modmatrix, edges);
+    draw_lines(edges, s, c);
   }
-
-  
-  printf("\nMODMATRIX\n");
-  print_matrix(modmatrix);
-  printf("\nEDGES\n");
-  print_matrix(edges);
-
-  printf("\nMODMATRIX(IDENT) X EDGES\n");
-  matrix_mult(modmatrix, edges);
-  print_matrix(edges);
-
-  printf("\nMODMATRIX\n");
-  for(int r = 0; r < modmatrix->rows; r++){
-    for(int c = 0; c < modmatrix->cols; c++){
-      modmatrix->m[r][c] = r+c;
-    }
-  }  
-  print_matrix(modmatrix);  
-  printf("\nMODMATRIX X EDGES\n");
-  matrix_mult(modmatrix, edges);
-  print_matrix(edges);
-
   
   free_matrix( edges );
   free_matrix( modmatrix );
-
+  
   display(s);
   save_extension(s, "matrix.png");
 }  

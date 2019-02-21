@@ -24,7 +24,7 @@ the template in the top comment
 void print_matrix(struct matrix *m) {
   for(int r = 0; r < m->rows; r ++){
     for(int c = 0; c < m->cols; c ++){
-      printf("%lf%d\t", m->m[r][c], c);
+      printf("%lf\t", m->m[r][c]);
     }
     printf("\n");
   }
@@ -67,11 +67,7 @@ void matrix_mult(struct matrix *a, struct matrix *b) {
       temp->m[ar][bc] = sumofpro;
     }
   }
-  for(int r = 0; r < a->rows; r++){
-    for(int c = 0; c < b->cols; c++){
-      b->m[r][c] = temp->m[r][c];
-    }
-  }
+  copy_matrix(temp, b);
 }
 
 
