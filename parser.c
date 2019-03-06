@@ -56,10 +56,14 @@ void parse_file ( char * filename,
                   struct matrix * transform, 
                   struct matrix * edges,
                   screen s) {
-
   FILE *f;
   char line[256];
   clear_screen(s);
+
+  color c;  
+  c.red = 0;
+  c.green = MAX_COLOR;
+  c.blue = 0;
 
   if ( strcmp(filename, "stdin") == 0 ) 
     f = stdin;
@@ -69,6 +73,95 @@ void parse_file ( char * filename,
   while ( fgets(line, 255, f) != NULL ) {
     line[strlen(line)-1]='\0';
     printf(":%s:\n",line);
+
+    //line
+    if(strcmp(line, "line") == 0){
+      char *buffer = fgets(line, 255, f);
+      char *params = calloc(6, sizeof(double));
+      for(int i = 0; i < 6; i ++){
+        params[i] = atof(strsep(&buffer, " "));
+	//printf("%d\t", params[i]);
+      }
+      add_edge(edges, params[0], params[1], params[2], params[3], params[4], params[5]);
+      free(buffer);
+      free(params);
+    }
+    //ident
+    if(strcmp(line, "ident") == 0){
+      ident(transform);
+      //print_matrix(transform);
+    }
+    //scale
+    if(strcmp(line, "scale") == 0){
+      char *buffer = fgets(line, 255, f);
+      char *params = calloc(3, sizeof(double));
+      for(int i = 0; i < 3; i ++){
+        params[i] = atof(strsep(&buffer, " "));
+	//printf("%d\t", params[i]);
+      }
+      matrix_mult(make_scale(params[0], params[1], params[2]), transform);
+      //print_matrix(transform);
+      free(buffer);
+      free(params);
+    }
+    //translate
+    if(strcmp(line, "move") == 0){
+      char *buffer = fgets(line, 255, f);
+      char *params = calloc(3, sizeof(double));
+      for(int i = 0; i < 3; i ++){
+	params[i] = atof(strsep(&buffer, " "));
+	//printf("%d\t", params[i]);
+      }
+      matrix_mult(make_translate(params[0], params[1], params[2]), transform);
+      //print_matrix(transform);
+      free(buffer);
+      free(params);
+    }
+    //rotate
+    if(strcmp(line, "rotate") == 0){
+      char *buffer = fgets(line, 255, f);
+      char *axis = malloc(sizeof(char));
+      strcpy(axis, strsep(&buffer, " "));
+      double theta = atof(strsep(&buffer, " "));
+      //printf("%s, %lf\t", axis, theta);
+      if(strcmp(axis, "x") == 0){
+	matrix_mult(make_rotX(theta), transform);
+      }
+      else if(strcmp(axis, "y") == 0){
+	matrix_mult(make_rotY(theta), transform);
+      }
+      else if(strcmp(axis, "z") == 0){
+	matrix_mult(make_rotZ(theta), transform);
+      }
+      //print_matrix(transform);
+      free(buffer);
+      free(axis);
+    }
+    //apply
+    if(strcmp(line, "apply") == 0){
+      matrix_mult(transform, edges);
+    }
+    //display
+    if(strcmp(line, "display") == 0){
+      clear_screen(s);
+      draw_lines(edges, s, c);
+      display(s);
+    }
+    //save
+    if(strcmp(line, "save") == 0){
+      char *fname = calloc(256, sizeof(char));
+      fgets(fname, 255, f);
+      fname[strlen(fname)-1]='\0';
+      fgets(fname, 255, f);
+
+      clear_screen(s);
+      draw_lines(edges, s, c);
+      save_extension(s, fname);
+    }
+    //quit
+    if(strcmp(line, "quit") == 0){
+      fseek(f, 0, SEEK_END);
+    }
   }
-}
   
+}

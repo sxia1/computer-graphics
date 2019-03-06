@@ -11,17 +11,17 @@
 int main(int argc, char **argv) {
 
   screen s;
+  
   struct matrix * edges;
   struct matrix * transform;
 
   edges = new_matrix(4, 4);
   transform = new_matrix(4, 4);
   
-  /*  if ( argc == 2 )
+  if ( argc == 2 )
     parse_file( argv[1], transform, edges, s );
   else
     parse_file( "stdin", transform, edges, s );
-  */
   
   free_matrix( edges );
   free_matrix( transform );

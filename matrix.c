@@ -55,14 +55,14 @@ Returns: The rotation matrix created using theta as the
 angle of rotation and X as the axis of rotation.
 ====================*/
 struct matrix * make_rotX(double theta) {
-  theta = theta *180 /M_PI;
+  double radians = theta *180 /M_PI;
   struct matrix * rotX;
   rotX = new_matrix(4, 4);  
   ident(rotX);
-  rotX->m[1][1] = cos(theta);
-  rotX->m[1][2] = -sin(theta);
-  rotX->m[2][1] = sin(theta);
-  rotX->m[2][2] = cos(theta);
+  rotX->m[1][1] = cos(radians);
+  rotX->m[1][2] = -(sin(radians));
+  rotX->m[2][1] = sin(radians);
+  rotX->m[2][2] = cos(radians);
   return rotX;
 }
 
@@ -73,14 +73,14 @@ Returns: The rotation matrix created using theta as the
 angle of rotation and Y as the axis of rotation.
 ====================*/
 struct matrix * make_rotY(double theta) {
-  theta = theta *180 /M_PI;
+  double radians = theta *180 /M_PI;
   struct matrix * rotY;
   rotY = new_matrix(4, 4);
   ident(rotY);
-  rotY->m[0][0] = cos(theta);
-  rotY->m[0][2] = sin(theta);
-  rotY->m[2][0] = -sin(theta);
-  rotY->m[2][2] = cos(theta);
+  rotY->m[0][0] = cos(radians);
+  rotY->m[0][2] = sin(radians);
+  rotY->m[2][0] = -(sin(radians));
+  rotY->m[2][2] = cos(radians);
   return rotY;
 }
 
@@ -91,14 +91,14 @@ Returns: The rotation matrix created using theta as the
 angle of rotation and Z as the axis of rotation.
 ====================*/
 struct matrix * make_rotZ(double theta) {
-  theta = theta *180 /M_PI;
+  double radians = theta *180 /M_PI;
   struct matrix * rotZ;
   rotZ = new_matrix(4, 4);
   ident(rotZ);
-  rotZ->m[0][0] = cos(theta);
-  rotZ->m[0][1] = -sin(theta);
-  rotZ->m[1][0] = sin(theta);
-  rotZ->m[1][1] = cos(theta);
+  rotZ->m[0][0] = cos(radians);
+  rotZ->m[0][1] = -(sin(radians));
+  rotZ->m[1][0] = sin(radians);
+  rotZ->m[1][1] = cos(radians);
   return rotZ;
 }
 
