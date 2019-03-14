@@ -23,9 +23,9 @@ void add_circle( struct matrix *edges,
   double prevx = cx;
   double prevy = cy;
   for(double t = 0.0; t < 1; t += step){
-    double x = r*cos(2*MATH_PI*t) +cx;
-    double y = r*sin(2*MATH_PI*t) +cy;
-    add_edge(prevx, prevy, x, y);
+    double x = r*cos(2*M_PI*t) +cx;
+    double y = r*sin(2*M_PI*t) +cy;
+    add_edge(edges, prevx, prevy, 0, x, y, 0);
     prevx = x;
     prevy = y;
   }
@@ -44,7 +44,7 @@ Inputs:   struct matrix *edges
          double step
          int type
 
-Adds the curve bounded by the 4 points passsed as parameters
+Adds the curve bounded by the 4 points passed as parameters
 of type specified in type (see matrix.h for curve type constants)
 to the matrix edges
 ====================*/
@@ -54,10 +54,17 @@ void add_curve( struct matrix *edges,
                 double x2, double y2, 
                 double x3, double y3, 
                 double step, int type ) {
-  generate_curve_coefs(x0, y0, x1, y1, type);
-  generate_curve_coefs(x2, y2, x3, y3, type);
-  for(double t = 0.0; t < 1; t += step){
-    
+  if(type == HERMITE){
+    generate_curve_coefs(x0, y0, x2, y2, HERMITE);
+    generate_curve_coefs(x1, y1, x3, y3, HERMITE);
+    for(double t = 0.0; t < 1; t += step){
+    }
+  }
+  else if(type == BEZIER){
+    generate_curve_coefs(x0, y0, x2, y2, BEZIER);
+    generate_curve_coefs(x1, y1, x3, y3, BEZIER);
+    for(double t = 0.0; t < 1; t += step){
+    }
   }
 }
 
