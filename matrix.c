@@ -21,10 +21,19 @@
 struct matrix * make_bezier() {
   struct matrix *bez;
   bez = new_matrix(4, 4);
-  bez->m[0][0] = -1; bez->m[0][1] = 3; bez->m[0][2] = -3; bez->m[0][3] = 1;
-  bez->m[1][0] = 3; bez->m[1][1] = -6; bez->m[1][2] = 3;
-  bez->m[2][0] = -3; bez->m[2][1] = 3;
+  ident(bez);
+  bez->m[0][0] = -1;
+  bez->m[0][1] = 3;
+  bez->m[0][2] = -3;
+  bez->m[0][3] = 1;
+  bez->m[1][0] = 3;
+  bez->m[1][1] = -6;
+  bez->m[1][2] = 3;
+  bez->m[2][0] = -3;
+  bez->m[2][1] = 3;
+  bez->m[2][2] = 0;
   bez->m[3][0] = 1;
+  bez->m[3][3] = 0;
   return bez;
 }
 
@@ -35,10 +44,17 @@ struct matrix * make_bezier() {
 struct matrix * make_hermite() {
   struct matrix *herm;
   herm = new_matrix(4, 4);
-  herm->m[0][0] = 2; herm->m[0][1] = -2; herm->m[0][2] = 1; herm->m[0][3] = 1;
-  herm->m[1][0] = -3; herm->m[1][1] = 3; herm->m[1][2] = -2; herm->m[1][3] = -1;
-  herm->m[2][2] = 1;
+  ident(herm);
+  herm->m[0][0] = 2;
+  herm->m[0][1] = -2;
+  herm->m[0][2] = 1;
+  herm->m[0][3] = 1;
+  herm->m[1][0] = -3;
+  herm->m[1][1] = 3;
+  herm->m[1][2] = -2;
+  herm->m[1][3] = -1;
   herm->m[3][0] = 1;
+  herm->m[3][3] = 0;
   return herm;
 }
 
@@ -59,11 +75,12 @@ struct matrix * generate_curve_coefs( double p1, double p2,
                                       double p3, double p4, int type) {
   struct matrix *vals;
   vals = new_matrix(4, 1);
+  vals->lastcol = 1;
   vals->m[0][0] = p1;
   vals->m[1][0] = p2;
   vals->m[2][0] = p3;
   vals->m[3][0] = p4;
-
+  
   if(type == HERMITE){
     matrix_mult(make_hermite(), vals);
   }

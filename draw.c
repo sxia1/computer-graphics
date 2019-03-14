@@ -10,74 +10,88 @@
 
 /*======== void add_circle() ==========
   Inputs:   struct matrix * edges
-            double cx
-            double cy
-            double r
-            double step
+  double cx
+  double cy
+  double r
+  double step
 
   Adds the circle at (cx, cy) with radius r to edges
   ====================*/
 void add_circle( struct matrix *edges,
                  double cx, double cy, double cz,
                  double r, double step ) {
-  double prevx = cx;
-  double prevy = cy;
-  for(double t = 0.0; t < 1; t += step){
-    double x = r*cos(2*M_PI*t) +cx;
-    double y = r*sin(2*M_PI*t) +cy;
-    add_edge(edges, prevx, prevy, 0, x, y, 0);
-    prevx = x;
-    prevy = y;
+  double x0, y0, x1, y1;
+  for(double t = 0.0; t <= 1.0; t += step){
+    x0 = r*cos(2*M_PI*t) +cx;
+    y0 = r*sin(2*M_PI*t) +cy;
+    x1 = r*cos(2*M_PI*(t+step)) +cx;
+    y1 = r*sin(2*M_PI*(t+step)) +cy;
+    add_edge(edges, x0, y0, 0, x1, y1, 0);
   }
 }
 
 /*======== void add_curve() ==========
-Inputs:   struct matrix *edges
-         double x0
-         double y0
-         double x1
-         double y1
-         double x2
-         double y2
-         double x3
-         double y3
-         double step
-         int type
+  Inputs:   struct matrix *edges
+  double x0
+  double y0
+  double x1
+  double y1
+  double x2
+  double y2
+  double x3
+  double y3
+  double step
+  int type
 
-Adds the curve bounded by the 4 points passed as parameters
-of type specified in type (see matrix.h for curve type constants)
-to the matrix edges
-====================*/
+  Adds the curve bounded by the 4 points passed as parameters
+  of type specified in type (see matrix.h for curve type constants)
+  to the matrix edges
+  ====================*/
 void add_curve( struct matrix *edges,
                 double x0, double y0, 
                 double x1, double y1, 
                 double x2, double y2, 
                 double x3, double y3, 
                 double step, int type ) {
-  if(type == HERMITE){
-    generate_curve_coefs(x0, y0, x2, y2, HERMITE);
-    generate_curve_coefs(x1, y1, x3, y3, HERMITE);
-    for(double t = 0.0; t < 1; t += step){
-    }
-  }
-  else if(type == BEZIER){
-    generate_curve_coefs(x0, y0, x2, y2, BEZIER);
-    generate_curve_coefs(x1, y1, x3, y3, BEZIER);
-    for(double t = 0.0; t < 1; t += step){
-    }
+  double x, y, nx, ny;
+  struct matrix *xcoef;
+  struct matrix *ycoef;
+  xcoef = generate_curve_coefs(x0, x1, x2, x3, type);
+  ycoef = generate_curve_coefs(y0, y1, y2, y3, type);
+  print_matrix(xcoef);
+  print_matrix(ycoef);
+  for(double t = 0.0; t < 1; t += step){
+    x = xcoef->m[0][0] * pow(t, 3) +
+      xcoef->m[1][0] * pow(t, 2) +
+      xcoef->m[2][0] * t +
+      xcoef->m[3][0];
+    y = ycoef->m[0][0] * pow(t, 3) +
+      ycoef->m[1][0] * pow(t, 2) +
+      ycoef->m[2][0] * t +
+      ycoef->m[3][0];
+    nx = xcoef->m[0][0] * pow((t + step), 3) +
+      xcoef->m[1][0] * pow((t + step), 2) +
+      xcoef->m[2][0] * (t + step) +
+      xcoef->m[3][0];
+    ny = ycoef->m[0][0] * pow((t + step), 3) +
+      ycoef->m[1][0] * pow((t + step), 2) +
+      ycoef->m[2][0] * (t + step) +
+      ycoef->m[3][0];
+    
+    add_edge(edges, x, y, 0, nx, ny, 0);
   }
 }
 
 
 /*======== void add_point() ==========
-Inputs:   struct matrix * points
-         int x
-         int y
-         int z 
-Returns: 
-adds point (x, y, z) to points and increment points.lastcol
-if points is full, should call grow on points
-====================*/
+  Inputs:   struct matrix * points
+  int x
+  int y
+  int z 
+  Returns: 
+  adds point (x, y, z) to points and increment points.lastcol
+  if points is full, should call grow on points
+  ====================*/
 void add_point( struct matrix * points, double x, double y, double z) {
 
   if ( points->lastcol == points->cols )
@@ -91,12 +105,12 @@ void add_point( struct matrix * points, double x, double y, double z) {
 } //end add_point
 
 /*======== void add_edge() ==========
-Inputs:   struct matrix * points
-          int x0, int y0, int z0, int x1, int y1, int z1
-Returns: 
-add the line connecting (x0, y0, z0) to (x1, y1, z1) to points
-should use add_point
-====================*/
+  Inputs:   struct matrix * points
+  int x0, int y0, int z0, int x1, int y1, int z1
+  Returns: 
+  add the line connecting (x0, y0, z0) to (x1, y1, z1) to points
+  should use add_point
+  ====================*/
 void add_edge( struct matrix * points, 
 	       double x0, double y0, double z0, 
 	       double x1, double y1, double z1) {
@@ -105,27 +119,27 @@ void add_edge( struct matrix * points,
 }
 
 /*======== void draw_lines() ==========
-Inputs:   struct matrix * points
-         screen s
-         color c 
-Returns: 
-Go through points 2 at a time and call draw_line to add that line
-to the screen
-====================*/
+  Inputs:   struct matrix * points
+  screen s
+  color c 
+  Returns: 
+  Go through points 2 at a time and call draw_line to add that line
+  to the screen
+  ====================*/
 void draw_lines( struct matrix * points, screen s, color c) {
 
- if ( points->lastcol < 2 ) {
-   printf("Need at least 2 points to draw a line!\n");
-   return;
- }
+  if ( points->lastcol < 2 ) {
+    printf("Need at least 2 points to draw a line!\n");
+    return;
+  }
  
- int point;
- for (point=0; point < points->lastcol-1; point+=2)
-   draw_line( points->m[0][point],
-	      points->m[1][point],
-	      points->m[0][point+1],
-	      points->m[1][point+1],
-	      s, c);	       
+  int point;
+  for (point=0; point < points->lastcol-1; point+=2)
+    draw_line( points->m[0][point],
+	       points->m[1][point],
+	       points->m[0][point+1],
+	       points->m[1][point+1],
+	       s, c);	       
 }// end draw_lines
 
 
