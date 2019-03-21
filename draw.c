@@ -61,7 +61,11 @@ void add_box( struct matrix * edges,
 void add_sphere( struct matrix * edges, 
                  double cx, double cy, double cz,
                  double r, int step ) {
-  
+  struct matrix *sphere = generate_sphere(cx, cy, cz, r, step);
+  for(int i = 0; i < sphere->lastcol; i ++){
+    add_edge(edges, sphere->m[0][i], sphere->m[1][i], sphere->m[2][i],
+	     sphere->m[0][i], sphere->m[1][i], sphere->m[2][i]);
+  }
 }
 
 /*======== void generate_sphere() ==========
@@ -78,7 +82,19 @@ void add_sphere( struct matrix * edges,
   ====================*/
 struct matrix * generate_sphere(double cx, double cy, double cz,
                                 double r, int step ) {
-  return NULL;
+  struct matrix *sphere = new_matrix(4, 4);
+  double phi, theta, x, y, z;
+  for(int i = 0; i < step; i ++){
+    phi = 2 *M_PI *i /step;
+    for(int j = 0; j < step; j ++){
+      theta = M_PI *j /step;
+      x = r*cos(theta) + cx;
+      y = r*sin(theta)*cos(phi) +cy;
+      z = r*sin(theta)*sin(phi) +cz;
+      add_point(sphere, x, y, z);
+    }
+  }
+  return sphere;
 }
 
 /*======== void add_torus() ==========
@@ -99,7 +115,11 @@ struct matrix * generate_sphere(double cx, double cy, double cz,
 void add_torus( struct matrix * edges, 
                 double cx, double cy, double cz,
                 double r1, double r2, int step ) {
-  return;
+  struct matrix *torus = generate_torus(cx, cy, cz, r1, r2, step);
+  for(int i = 0; i < torus->lastcol; i ++){
+    add_edge(edges, torus->m[0][i], torus->m[1][i], torus->m[2][i],
+	     torus->m[0][i], torus->m[1][i], torus->m[2][i]);
+  }
 }
 
 /*======== void generate_torus() ==========
@@ -117,7 +137,19 @@ void add_torus( struct matrix * edges,
   ====================*/
 struct matrix * generate_torus( double cx, double cy, double cz,
                                 double r1, double r2, int step ) {
-  return NULL;
+  struct matrix *torus = new_matrix(4, 4);
+  double phi, theta, x, y, z;
+  for(int i = 0; i < step; i ++){
+    phi = 2 *M_PI *i /step;
+    for(int j = 0; j < step; j ++){
+      theta = 2 *M_PI *j /step;
+      x = cos(phi)*(r1*cos(theta) +r2) +cx;
+      y = r1*sin(theta) +cy;
+      z = -sin(phi)*(r1*cos(theta) +r2) +cz;
+      add_point(torus, x, y, z);
+    }
+  }
+  return torus;
 }
 
 /*======== void add_circle() ==========
