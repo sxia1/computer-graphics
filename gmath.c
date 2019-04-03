@@ -25,5 +25,6 @@ double dot_product( double *a, double *b ) {
 //Calculate the surface normal for the triangle whose first
 //point is located at index i in polygons
 double *calculate_normal(struct matrix *polygons, int i) {
+  
   return NULL;
 }
