@@ -99,27 +99,29 @@ void add_box( struct matrix *polygons,
   z0 = z;
   z1 = z-depth;
 
-
   //front
-  add_polygon(polygons, x, y, z, x1, y1, z, x1, y, z);
-  add_polygon(polygons, x, y, z, x, y1, z, x1, y1, z);
+  add_polygon(polygons, x0, y0, z0, x1, y1, z0, x1, y0, z0);
+  add_polygon(polygons, x0, y0, z0, x0, y1, z0, x1, y1, z0);
+  
   //back
-  add_polygon(polygons, x1, y, z1, x, y1, z1, x, y, z1);
-  add_polygon(polygons, x1, y, z1, x1, y1, z1, x, y1, z1);
-
-  //right side
-  add_polygon(polygons, x1, y, z, x1, y1, z1, x1, y, z1);
-  add_polygon(polygons, x1, y, z, x1, y1, z, x1, y1, z1);
-  //left side
-  add_polygon(polygons, x, y, z1, x, y1, z, x, y, z);
-  add_polygon(polygons, x, y, z1, x, y1, z1, x, y1, z);
-
+  add_polygon(polygons, x0, y0, z1, x1, y0, z1, x0, y1, z1);
+  add_polygon(polygons, x1, y1, z1, x0, y1, z1, x1, y0, z1);
+  
   //top
-  add_polygon(polygons, x, y, z1, x1, y, z, x1, y, z1);
-  add_polygon(polygons, x, y, z1, x, y, z, x1, y, z);
+  add_polygon(polygons, x0, y0, z0, x1, y0, z0, x0, y0, z1);
+  add_polygon(polygons, x1, y0, z0, x1, y0, z1, x0, y0, z1);
+  
   //bottom
-  add_polygon(polygons, x, y1, z, x1, y1, z1, x1, y1, z);
-  add_polygon(polygons, x, y1, z, x, y1, z1, x1, y1, z1);
+  add_polygon(polygons, x0, y1, z0, x0, y1, z1, x1, y1, z1);
+  add_polygon(polygons, x1, y1, z0, x0, y1, z0, x1, y1, z1);
+
+  //left
+  add_polygon(polygons, x0, y1, z0, x0, y0, z1, x0, y1, z1);
+  add_polygon(polygons, x0, y1, z0, x0, y0, z0, x0, y0, z1);
+
+  //right
+  add_polygon(polygons, x1, y1, z0, x1, y1, z1, x1, y0, z1);
+  add_polygon(polygons, x1, y1, z0, x1, y0, z1, x1, y0, z0);  
 }
 
 

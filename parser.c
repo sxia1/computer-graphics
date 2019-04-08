@@ -133,11 +133,11 @@ void parse_file ( char * filename,
       sscanf(line, "%lf %lf %lf %lf %lf %lf",
 	     xvals, yvals, zvals,
 	     xvals+1, yvals+1, zvals+1);
-      add_box(tmp, xvals[0], yvals[0], zvals[0],
+      add_box(polygons, xvals[0], yvals[0], zvals[0],
 	      xvals[1], yvals[1], zvals[1]);
-      matrix_mult(tmp, csystems->data[csystems->top]);
-      draw_polygons(tmp, s, c);
-      free_matrix(tmp);
+      matrix_mult(peek(csystems), polygons);
+      draw_polygons(polygons, s, c);
+      polygons->lastcol=0;
     }
     
     //SPHERE-----------------------------------------------------------------------
@@ -147,10 +147,10 @@ void parse_file ( char * filename,
 
       sscanf(line, "%lf %lf %lf %lf",
 	     xvals, yvals, zvals, &r);
-      add_sphere( tmp, xvals[0], yvals[0], zvals[0], r, step_3d);
-      matrix_mult(tmp, csystems->data[csystems->top]);
-      draw_polygons(tmp, s, c);
-      free_matrix(tmp);
+      add_sphere( polygons, xvals[0], yvals[0], zvals[0], r, step_3d);
+      matrix_mult(peek(csystems), polygons);
+      draw_polygons(polygons, s, c);
+      polygons->lastcol=0;
     }
 
     //TORUS-----------------------------------------------------------------------
@@ -160,9 +160,10 @@ void parse_file ( char * filename,
 
       sscanf(line, "%lf %lf %lf %lf %lf",
 	     xvals, yvals, zvals, &r, &r1);
-      add_torus( tmp, xvals[0], yvals[0], zvals[0], r, r1, step_3d);
-      matrix_mult(tmp, csystems->data[csystems->top]);
-      draw_polygons(tmp, s, c);
+      add_torus( polygons, xvals[0], yvals[0], zvals[0], r, r1, step_3d);
+      matrix_mult(peek(csystems), polygons);
+      draw_polygons(polygons, s, c);
+      polygons->lastcol=0;
     }
 
     //=======================================LINES=======================================
@@ -173,9 +174,10 @@ void parse_file ( char * filename,
 
       sscanf(line, "%lf %lf %lf %lf",
              xvals, yvals, zvals, &r);
-      add_circle( tmp, xvals[0], yvals[0], zvals[0], r, step);
-      matrix_mult(tmp, csystems->data[csystems->top]);
-      draw_lines(tmp, s, c);
+      add_circle( edges, xvals[0], yvals[0], zvals[0], r, step);
+      matrix_mult(peek(csystems), edges);
+      draw_lines(edges, s, c);
+      edges->lastcol=0;
     }
 
     //SPLINES-----------------------------------------------------------------------
@@ -199,10 +201,11 @@ void parse_file ( char * filename,
       /*       xvals[3], yvals[3]); */
       
       //printf("%d\n", type);
-      add_curve( tmp, xvals[0], yvals[0], xvals[1], yvals[1],
+      add_curve( edges, xvals[0], yvals[0], xvals[1], yvals[1],
 		 xvals[2], yvals[2], xvals[3], yvals[3], step, type);
-      matrix_mult(tmp, csystems->data[csystems->top]);
-      draw_lines(tmp, s, c);
+      matrix_mult(peek(csystems), edges);
+      draw_lines(edges, s, c);
+      edges->lastcol=0;
     }
 
     //LINE-----------------------------------------------------------------------
@@ -218,6 +221,9 @@ void parse_file ( char * filename,
 	xvals[1], yvals[1], zvals[1]) */
       add_edge(edges, xvals[0], yvals[0], zvals[0],
 	       xvals[1], yvals[1], zvals[1]);
+      matrix_mult(peek(csystems), edges);
+      draw_lines(edges, s, c);
+      edges->lastcol=0;
     }
 
     //===================================TRANSFORMATIONS===================================
@@ -230,7 +236,8 @@ void parse_file ( char * filename,
       /* printf("%lf %lf %lf\n", */
       /* xvals[0], yvals[0], zvals[0]); */
       tmp = make_scale( xvals[0], yvals[0], zvals[0]);
-      matrix_mult(tmp, transform);
+      matrix_mult(peek(csystems), tmp);
+      copy_matrix(tmp, peek(csystems));
     }
 
     //MOVE-----------------------------------------------------------------------
@@ -242,7 +249,8 @@ void parse_file ( char * filename,
       /* printf("%lf %lf %lf\n", */
       /* xvals[0], yvals[0], zvals[0]); */
       tmp = make_translate( xvals[0], yvals[0], zvals[0]);
-      matrix_mult(tmp, transform);
+      matrix_mult(peek(csystems), tmp);
+      copy_matrix(tmp, peek(csystems));
     }
 
     //ROTATE-----------------------------------------------------------------------
@@ -260,17 +268,14 @@ void parse_file ( char * filename,
         tmp = make_rotY( theta );
       else
         tmp = make_rotZ( theta );
-
-      matrix_mult(tmp, transform);
+      matrix_mult(peek(csystems), tmp);
+      copy_matrix(tmp, peek(csystems));
     }
 
     //==========================================ETC==========================================
     //DISPLAY-----------------------------------------------------------------------
     else if ( strncmp(line, "display", strlen(line)) == 0 ) {
       //printf("DISPLAY\t%s", line);
-      clear_screen(s);
-      draw_lines(edges, s, c);
-      draw_polygons(polygons, s, c);
       display( s );
     }
 
@@ -280,9 +285,6 @@ void parse_file ( char * filename,
       fgets(line, sizeof(line), f);
       *strchr(line, '\n') = 0;
       //printf("name: %s\n", line);
-      clear_screen(s);
-      draw_lines(edges, s, c);
-      draw_polygons(polygons, s, c);
       save_extension(s, line);
     }
     
