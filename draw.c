@@ -8,6 +8,7 @@
 #include "math.h"
 #include "gmath.h"
 
+
 /*======== void scanline_convert() ==========
   Inputs: struct matrix *points
           int i
@@ -20,7 +21,78 @@
   Color should be set differently for each polygon.
   ====================*/
 void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
+  for(int point = 0; point < points->lastcol-2; point += 3){
+    int arr[3];
+    //INSERTION SORTING (ORDER: TOP,MID,BOT)
+    //insert p0
+    arr[0] = 0;
+    //insert p1
+    //if p1 > p0 insert at front
+    if(points->m[1][point +1] > points->m[1][point + arr[0]]){
+      arr[1] = arr[0];
+      arr[0] = 1;
+    }
+    //else insert at back
+    else{
+      arr[1] = 1;
+    }
+    //insert p2
+    //if p2 > curr top insert at front
+    if(points->m[1][point +2] > points->m[1][point + arr[0]]){
+      arr[2] = arr[1];
+      arr[1] = arr[0];
+      arr[0] = 2;
+    }
+    //else if p2 > curr mid insert at mid
+    else if(points->m[1][point +2] > points->m[1][point + arr[1]]){
+      arr[2] = arr[1];
+      arr[1] = 2;
+    }
+    //else insert at back
+    else{
+      arr[2] = 2;
+    }
+    
+    //set top, middle, and bottom vertices
+    int tx, ty, tz, bx, by, bz, mx, my, mz
+    tx = points->m[0][point + arr[0]];
+    ty = points->m[1][point + arr[0]];
+    tz = points->m[2][point + arr[0]];
+    
+    bx = points->m[0][point + arr[1]];
+    by = points->m[1][point + arr[1]];
+    bz = points->m[2][point + arr[1]];
+    
+    mx = points->m[0][point + arr[2]];
+    my = points->m[1][point + arr[2]];
+    mz = points->m[2][point + arr[2]];
 
+    //x coor endpoints
+    int x0, x1;
+    x0 = bx;
+    if(my == by){
+      x1 = mx;
+    }
+    else{
+      x1 = bx;
+    }
+    int d0 = (tx-bx)/(ty-by);
+    int d1 = (mx-bx)/(my-by);
+    //for each horizontal line
+    for(int line = by; line < ty; by ++){
+      //check: switch from BM to MT
+      if(line == my){
+	d1 = (tx-mx)/(ty-my);
+      }
+      //calculate z values
+      //draw horizontal line
+      draw_line();
+
+      //step endpoints
+      x0 += d0;
+      x1 += d1;
+    }
+  }
 }
 
 /*======== void add_polygon() ==========
