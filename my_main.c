@@ -140,7 +140,7 @@ void my_main() {
 	    printf("\tknob: %s",op[i].op.rotate.p->name);
 	  }
 	double theta = op[i].op.rotate.degrees * (M_PI / 180);
-	char *axis = op[i].op.rotate.axis;
+	double axis = op[i].op.rotate.axis;
 	if ( axis == 'x' )
 	  tmp = make_rotX( theta );
 	else if ( axis == 'y' )
@@ -179,8 +179,8 @@ void my_main() {
 	add_box(tmp, op[i].op.box.d0[0], op[i].op.box.d0[1], op[i].op.box.d0[2],
 	       op[i].op.box.d1[0], op[i].op.box.d1[1], op[i].op.box.d1[2]);
 	matrix_mult(peek(systems), tmp);
-	draw_polygons(tmp, t, zb, g,
-		      view, light, ambient, reflect[AMBIENT_R], reflect[DIFFUSE_R], reflect[SPECULAR_R]);
+	draw_polygons(tmp, t, zb,
+		      view, light, ambient, reflect);
 	tmp->lastcol = 0;
 	break;
       case SPHERE:
@@ -196,27 +196,70 @@ void my_main() {
 	  {
 	    printf("\tcs: %s",op[i].op.sphere.cs->name);
 	  }
-	add_sphere( polygons, op[i].op.sphere.d[0],op[i].op.sphere.d[1], op[i].op.sphere.d[2],
+	add_sphere( tmp, op[i].op.sphere.d[0],op[i].op.sphere.d[1], op[i].op.sphere.d[2],
 		    op[i].op.sphere.r, step_3d);
-	matrix_mult(peek(systems), polygons);
-	draw_polygons(polygons, t, zb, g,
-		      view, light, ambient, reflect[AMBIENT_R], reflect[DIFFUSE_R], reflect[SPECULAR_R]);
-	polygons->lastcol = 0;
+	matrix_mult(peek(systems), tmp);
+	draw_polygons(tmp, t, zb,
+		      view, light, ambient, reflect);
+	tmp->lastcol = 0;
 	break;
       case TORUS:
-	printf("TORUS");
+	printf("TORUS: %6.2f %6.2f %6.2f r0=%6.2f r1=%6.2f",
+	       op[i].op.torus.d[0],op[i].op.torus.d[1],
+	       op[i].op.torus.d[2],
+	       op[i].op.torus.r0,op[i].op.torus.r1);
+	if (op[i].op.torus.constants != NULL)
+	  {
+	    printf("\tconstants: %s",op[i].op.torus.constants->name);
+	  }
+	if (op[i].op.torus.cs != NULL)
+	  {
+	    printf("\tcs: %s",op[i].op.torus.cs->name);
+	  }
+	add_torus( tmp, op[i].op.torus.d[0],op[i].op.torus.d[1],
+		   op[i].op.torus.d[2],
+		   op[i].op.torus.r0,op[i].op.torus.r1, step_3d);
+	matrix_mult(peek(systems), tmp);
+	draw_polygons(tmp, t, zb,
+		      view, light, ambient, reflect);
+	tmp->lastcol = 0;
 	break;
       case CONSTANTS:
 	printf("CONSTANTS");
 	break;
       case LINE:
-	printf("LINE");
+	printf("LINE: from: %6.2f %6.2f %6.2f to: %6.2f %6.2f %6.2f",
+	       op[i].op.line.p0[0],op[i].op.line.p0[1],
+	       op[i].op.line.p0[1],
+	       op[i].op.line.p1[0],op[i].op.line.p1[1],
+	       op[i].op.line.p1[1]);
+	if (op[i].op.line.constants != NULL)
+	  {
+	    printf("\n\tConstants: %s",op[i].op.line.constants->name);
+	  }
+	if (op[i].op.line.cs0 != NULL)
+	  {
+	    printf("\n\tCS0: %s",op[i].op.line.cs0->name);
+	  }
+	if (op[i].op.line.cs1 != NULL)
+	  {
+	    printf("\n\tCS1: %s",op[i].op.line.cs1->name);
+	  }
+	add_edge(tmp, op[i].op.line.p0[0],op[i].op.line.p0[1],
+	       op[i].op.line.p0[1],
+	       op[i].op.line.p1[0],op[i].op.line.p1[1],
+	       op[i].op.line.p1[1]);
+	matrix_mult(peek(systems), tmp);
+	draw_lines(tmp, t, zb, g);
+	tmp->lastcol = 0;
 	break;
       case SAVE:
-	printf("SAVE");
+	printf("SAVE: %s",op[i].op.save.p->name);
+	save_extension(t, op[i].op.save.p->name);
 	break;
       case DISPLAY:
 	printf("DISPLAY");
+	display( t );
 	break;   
     }
     printf("\n");
